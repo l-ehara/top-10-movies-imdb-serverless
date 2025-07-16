@@ -1,0 +1,54 @@
+# ====================
+# Local
+# ====================
+
+.env
+venv-lambda/
+.venv/
+__pycache__/
+*.pyc
+
+# ====================
+# Logs
+# ====================
+
+*.log
+*.tmp
+*.swp
+*.swo
+
+# ====================
+# Infrastructure
+# ====================
+
+infra/get_top10.zip
+infra/enrich_and_store.zip
+
+# ====================
+# Policy
+# ====================
+
+infra/policy.json
+
+# ====================
+# Lambda
+# ====================
+
+lambdas/enrich_and_store/bin/
+lambdas/enrich_and_store/include/
+lambdas/enrich_and_store/lib/
+lambdas/enrich_and_store/lib64/
+lambdas/enrich_and_store/*.dist-info/
+lambdas/enrich_and_store/requests/
+lambdas/enrich_and_store/urllib3/
+lambdas/enrich_and_store/idna/
+lambdas/enrich_and_store/charset_normalizer/
+lambdas/enrich_and_store/certifi/
+
+# ====================
+# Others
+# ====================
+
+.vscode/
+.idea/
+*.code-workspace
