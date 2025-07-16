@@ -29,6 +29,14 @@ def lambda_handler(event, context):
         key=lambda m: float(m["imDbRating"]),
         reverse=True
     )[:10]
+    print(f"DEBUG: found {len(movies)} movies with rating")
+
+    for movie in movies:
+        resp = sqs.send_message(
+            QueueUrl=QUEUE_URL,
+            MessageBody=json.dumps(movie)
+        )
+        print(f"DEBUG: sent {movie['id']} → {resp['MessageId']}")
 
     return {
         "statusCode": 200,

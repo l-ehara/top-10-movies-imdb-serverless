@@ -107,10 +107,23 @@ fi
 # 5.2 EnrichAndStoreMovie
 echo "-- Deploy/Update EnrichAndStoreMovie --"
 if aws lambda get-function --function-name EnrichAndStoreMovie --region "$REGION" > /dev/null 2>&1; then
+  # 1) envia o novo ZIP
   aws lambda update-function-code \
     --function-name EnrichAndStoreMovie \
     --zip-file fileb://enrich_and_store.zip \
     --region "$REGION"
+
+  # 2) espera concluir o update
+  echo "Waiting for EnrichAndStoreMovie code update…"
+  aws lambda wait function-updated \
+    --function-name EnrichAndStoreMovie \
+    --region "$REGION"
+
+  # 3) reaplica as variáveis de ambiente (ENRICH_BUCKET e OMDB_API_KEY)
+  aws lambda update-function-configuration \
+    --function-name EnrichAndStoreMovie \
+    --region "$REGION" \
+    --environment "Variables={ENRICH_BUCKET=${ENRICH_BUCKET},OMDB_API_KEY=${OMDB_API_KEY}}"
 else
   aws lambda create-function \
     --function-name EnrichAndStoreMovie \
