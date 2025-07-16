@@ -113,13 +113,13 @@ if aws lambda get-function --function-name EnrichAndStoreMovie --region "$REGION
     --zip-file fileb://enrich_and_store.zip \
     --region "$REGION"
 
-  # 2) espera concluir o update
+  # 2) Wait for update
   echo "Waiting for EnrichAndStoreMovie code update…"
   aws lambda wait function-updated \
     --function-name EnrichAndStoreMovie \
     --region "$REGION"
 
-  # 3) reaplica as variáveis de ambiente (ENRICH_BUCKET e OMDB_API_KEY)
+  # 3) Apply env variables
   aws lambda update-function-configuration \
     --function-name EnrichAndStoreMovie \
     --region "$REGION" \

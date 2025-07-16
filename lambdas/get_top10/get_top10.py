@@ -3,7 +3,7 @@ import boto3
 import requests
 import os
 
-# fixed URL for the raw data
+# Since the data is public no need to hide it
 RAW_URL  = "https://top-movies.s3.eu-central-1.amazonaws.com/Top250Movies.json"
 QUEUE_URL = os.environ["QUEUE_URL"]
 
@@ -23,7 +23,7 @@ def lambda_handler(event, context):
     else:
         raise ValueError(f"Unexpected JSON structure: {type(json_data)}")
 
-    # now sort & take top 10
+    # Sort and rank top 10
     movies = sorted(
         movies_list,
         key=lambda m: float(m["imDbRating"]),

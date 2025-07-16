@@ -18,7 +18,7 @@ def lambda_handler(event, context):
         else:
             body_str = json.dumps(raw_body)
 
-        # Now parse safely
+        # Parse JSON
         movie = json.loads(body_str)
 
         imdb_id = movie.get("id") or movie.get("imDbId")
