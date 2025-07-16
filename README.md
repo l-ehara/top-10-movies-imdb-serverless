@@ -29,7 +29,7 @@ Lambda functions and an SQS queue.
 
 ## 🗺️ Architecture (one‑glance)
 
-```
+```mermaid
 graph TD
     A[EventBridge<br>cron daily] -->|Invoke| B(Lambda<br>GetTop10Movies)
     B -->|10 messages| C[SQS<br>EnrichMoviesQueue]
