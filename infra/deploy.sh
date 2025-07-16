@@ -18,15 +18,21 @@ cat > infra/policy.json <<EOF
   "Statement": [
     {
       "Effect": "Allow",
-      "Action": ["s3:GetObject","s3:PutObject"],
+      "Action": [
+        "s3:PutObject"
+      ],
       "Resource": [
-        "arn:aws:s3:::${RAW_BUCKET}/*",
         "arn:aws:s3:::${ENRICH_BUCKET}/*"
       ]
     },
     {
       "Effect": "Allow",
-      "Action": ["sqs:SendMessage","sqs:ReceiveMessage","sqs:DeleteMessage","sqs:GetQueueAttributes"],
+      "Action": [
+        "sqs:SendMessage",
+        "sqs:ReceiveMessage",
+        "sqs:DeleteMessage",
+        "sqs:GetQueueAttributes"
+      ],
       "Resource": "arn:aws:sqs:${REGION}:${ACCOUNT_ID}:EnrichMoviesQueue"
     }
   ]
@@ -47,10 +53,11 @@ echo "ROLE_ARN = $ROLE_ARN"
 
 # 4) Package Lambdas
 # 4.1 GetTop10Movies
-echo "-- Packaging GetTop10Movies --"
+echo "-- Packaging GetTop10Movies (with requests) --"
 rm -f get_top10.zip
 cd lambdas/get_top10
-zip -j ../../infra/get_top10.zip get_top10.py
+pip install --target . -r requirements.txt
+zip -qr ../../infra/get_top10.zip .
 cd ../../infra
 
 # 4.2 EnrichAndStoreMovie
@@ -65,11 +72,26 @@ cd ../../infra
 # 5.1 GetTop10Movies
 echo "-- Deploy/Update GetTop10Movies --"
 if aws lambda get-function --function-name GetTop10Movies --region "$REGION" > /dev/null 2>&1; then
+  # 1) update the code
   aws lambda update-function-code \
     --function-name GetTop10Movies \
     --zip-file fileb://get_top10.zip \
     --region "$REGION"
+
+  # 2) wait for that update to finish before changing config
+  echo "Waiting for code update to succeed…"
+  aws lambda wait function-updated \
+    --function-name GetTop10Movies \
+    --region "$REGION"
+
+  # 3) now update the environment to point at the public bucket
+  aws lambda update-function-configuration \
+    --function-name GetTop10Movies \
+    --region "$REGION" \
+    --environment "Variables={RAW_BUCKET=${RAW_BUCKET},RAW_KEY=Top250Movies.json,QUEUE_URL=${QUEUE_URL}}"
+
 else
+  # first‐time create still defines the correct env
   aws lambda create-function \
     --function-name GetTop10Movies \
     --runtime python3.9 \

@@ -1,34 +1,36 @@
 import json
 import boto3
+import requests
 import os
-from urllib.request import urlopen
+
+# fixed URL for the raw data
+RAW_URL  = "https://top-movies.s3.eu-central-1.amazonaws.com/Top250Movies.json"
+QUEUE_URL = os.environ["QUEUE_URL"]
+
+sqs = boto3.client("sqs")
 
 def lambda_handler(event, context):
-    # Environment config
-    raw_bucket = os.environ.get("RAW_BUCKET")
-    raw_key = os.environ.get("RAW_KEY", "Top250Movies.json")
-    queue_url = os.environ.get("QUEUE_URL")
+    print(f"DEBUG: fetching {RAW_URL}")
+    resp = requests.get(RAW_URL)
+    resp.raise_for_status()
+    json_data = resp.json()
 
-    url = f"https://{raw_bucket}.s3.amazonaws.com/{raw_key}"
+    # extract the array of movies – Top250Movies.json uses the "items" field
+    if isinstance(json_data, dict) and "items" in json_data:
+        movies_list = json_data["items"]
+    elif isinstance(json_data, list):
+        movies_list = json_data
+    else:
+        raise ValueError(f"Unexpected JSON structure: {type(json_data)}")
 
-    # Debug: URL logging
-    print(f"DEBUG: Downloading JSON from {url}")
-
-    # Download JSON
-    response = urlopen(url)
-    data = json.loads(response.read().decode("utf-8"))
-
-    # Filter TOP 10
-    items = data.get("items", data)
-    top10 = sorted(
-        items,
-        key=lambda m: float(m.get("imDbRating", 0)),
+    # now sort & take top 10
+    movies = sorted(
+        movies_list,
+        key=lambda m: float(m["imDbRating"]),
         reverse=True
     )[:10]
 
-    # Send to SQS
-    sqs = boto3.client("sqs")
-    for movie in top10:
-        sqs.send_message(QueueUrl=queue_url, MessageBody=json.dumps(movie))
-
-    return {"statusCode": 200, "body": f"Sent {len(top10)} movies to queue"}
+    return {
+        "statusCode": 200,
+        "body": f"Sent {len(movies)} movies to the SQS queue"
+    }
