@@ -30,11 +30,14 @@ def lambda_handler(event, context):
         resp = requests.get(f"https://www.omdbapi.com/?apikey={omdb_key}&i={imdb_id}")
         resp.raise_for_status()
         movie.update(resp.json())
+        rank    = movie.get("rank", 0)
+        imdb_id = movie["id"]
+        filekey = f"{rank:02d}_{imdb_id}.json"
 
         # Write to S3
         s3.put_object(
             Bucket=enrich_bucket,
-            Key=f"{imdb_id}.json",
+            Key=filekey,
             Body=json.dumps(movie),
             ContentType="application/json"
         )

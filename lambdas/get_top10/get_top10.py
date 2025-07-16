@@ -30,6 +30,13 @@ def lambda_handler(event, context):
         reverse=True
     )[:10]
     print(f"DEBUG: found {len(movies)} movies with rating")
+    
+    for idx, movie in enumerate(movies, start=1):        # idx = 1…10
+        movie_with_rank = {**movie, "rank": idx}
+        sqs.send_message(
+            QueueUrl=QUEUE_URL,
+            MessageBody=json.dumps(movie_with_rank)
+        )
 
     for movie in movies:
         resp = sqs.send_message(
