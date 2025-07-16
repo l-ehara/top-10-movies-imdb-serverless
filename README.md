@@ -31,10 +31,10 @@ Lambda functions and an SQS queue.
 
 ```mermaid
 graph TD
-    A[EventBridge<br>cron daily] -->|Invoke| B(Lambda<br>GetTop10Movies)
-    B -->|10 messages| C[SQS<br>EnrichMoviesQueue]
-    C -->|batch (≤5)| D(Lambda<br>EnrichAndStoreMovie)
-    D -->|JSON→Put| E[S3 Bucket<br>top-movies-enriched-$ACCOUNT_ID]
+  A[EventBridge: cron daily] -->|Invoke| B[GetTop10Movies Lambda]
+  B -->|10 messages| C[EnrichMoviesQueue SQS]
+  C -->|batch (<=5)| D[EnrichAndStoreMovie Lambda]
+  D -->|JSON → Put| E[S3 Bucket top-movies-enriched-\$ACCOUNT_ID]
 ```
 
 *GetTop10Movies* never touches S3 permissions—downloads the public
