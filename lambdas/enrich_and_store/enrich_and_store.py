@@ -2,11 +2,14 @@ import json
 import boto3
 import os
 import requests
+from datetime import date
 
 def lambda_handler(event, context):
     enrich_bucket = os.environ["ENRICH_BUCKET"]
     omdb_key      = os.environ["OMDB_API_KEY"]
     s3            = boto3.client("s3")
+    # build a YYYY-MM-DD prefix folder
+    today = date.today().isoformat()
 
     for record in event.get("Records", []):
         # Normalize record["body"] into a JSON string
@@ -30,9 +33,12 @@ def lambda_handler(event, context):
         resp = requests.get(f"https://www.omdbapi.com/?apikey={omdb_key}&i={imdb_id}")
         resp.raise_for_status()
         movie.update(resp.json())
-        rank    = movie.get("rank", 0)
-        imdb_id = movie["id"]
-        filekey = f"{rank:02d}_{imdb_id}.json"
+
+        # Determine rank (injected by GetTop10Movies)
+        rank = movie.get("rank", 0)
+
+        # Build the S3 key: "YYYY-MM-DD/01_tt0111161.json"
+        filekey = f"{today}/{rank:02d}_{imdb_id}.json"
 
         # Write to S3
         s3.put_object(
@@ -41,6 +47,7 @@ def lambda_handler(event, context):
             Body=json.dumps(movie),
             ContentType="application/json"
         )
+        print(f"DEBUG: wrote s3://{enrich_bucket}/{filekey}")
 
     return {
         "statusCode": 200,
