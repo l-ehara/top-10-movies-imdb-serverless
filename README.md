@@ -73,8 +73,8 @@ Top 250 JSON directly.
 
 ```bash
 # 0. Clone & enter
-git clone https://github.com/yourname/top-10-movies-interview-sap.git
-cd top-10-movies-interview-sap
+git clone https://github.com/yourname/top-10-movies-imdb-serverless.git
+cd top-10-movies-imdb-serverless
 
 # 1. Fill in .env
 cp .env.exmaple .env                # edit ACCOUNT_ID, OMDB_API_KEY …
