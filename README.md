@@ -136,7 +136,7 @@ Daily cron is already scheduled; each run costs < 1¢.
   cat response_get10.json
   ```
 
-  * **Invoke EnrichAndStoreMovie with a fake SQS event**
+* **Invoke EnrichAndStoreMovie with a fake SQS event**
 
   ```bash
   cat <<EOF > test_event_sqs.json
