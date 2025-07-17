@@ -66,7 +66,7 @@ Top 250 JSON directly.
 ├── infra
 │   ├── deploy.sh                 # full IaC‑lite bash deploy
 │   └── policy.json               # generated at runtime
-└── .env.sample                   # copy → .env with your IDs
+└── .env.example                  # copy → .env with your IDs
 ```
 
 ---
