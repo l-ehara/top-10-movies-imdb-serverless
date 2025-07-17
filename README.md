@@ -124,6 +124,38 @@ Daily cron is already scheduled; each run costs < 1¢.
   ```bash
   aws s3 rm s3://$ENRICH_BUCKET/ --recursive --region $AWS_DEFAULT_REGION
   ```
+* **Invoke GetTop10Movies with a test event**
+
+  ```bash
+  echo '{}' > test_event_gettop10.json
+  aws lambda invoke \
+    --function-name GetTop10Movies \
+    --payload file://test_event_gettop10.json \
+    response_get10.json \
+    --region $AWS_DEFAULT_REGION
+  cat response_get10.json
+  ```
+
+  * **Invoke EnrichAndStoreMovie with a fake SQS event**
+
+  ```bash
+  cat <<EOF > test_event_sqs.json
+  {
+    "Records": [
+      {
+        "body":"{\"id\":\"tt0111161\",\"rank\":1}"
+      }
+    ]
+  }
+  EOF
+  
+  aws lambda invoke \
+    --function-name EnrichAndStoreMovie \
+    --payload file://test_event_sqs.json \
+    response_enrich.json \
+    --region $AWS_DEFAULT_REGION
+  cat response_enrich.json
+  ```
 
 ---
 
