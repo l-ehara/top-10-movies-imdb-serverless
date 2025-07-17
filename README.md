@@ -26,7 +26,7 @@ Lambda functions and an SQS queue.
   concurrency; IAM keeps the blast‑radius minimal.
 * **Readable costs.** Everything fits the AWS Free Tier (< 1 M requests/mo, tiny
   storage).
-* **Drop‑in JSONs.** Each object is named `01_tt0111161.json`, `02_…`—sorted and
+* **Drop‑in JSONs.** Each object is named `{YYYY-MM-DD}/{rank}_{movie_id}.json` `(2025-07-17/01_tt0111161.json)` — sorted and
   ready for downstream analytics or dashboards.
 
 ---
