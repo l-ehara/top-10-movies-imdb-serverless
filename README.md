@@ -11,10 +11,10 @@ Lambda functions and an SQS queue.
   <img src="https://img.shields.io/badge/AWS-Free%20Tier-brightgreen?logo=amazonaws" alt="AWS Free Tier">
   <img src="https://img.shields.io/badge/Lambda-Python%203.9-blue?logo=python" alt="AWS Lambda Python">
   <img src="https://img.shields.io/badge/S3-Storage-yellow?logo=amazons3" alt="Amazon S3">
+  <img src="https://img.shields.io/badge/SQS-Queue-ff4f8b?logo=amazonsqs" alt="Amazon SQS">
   <img src="https://img.shields.io/badge/EventBridge-Scheduled-orange?logo=amazonaws" alt="Amazon EventBridge">
   <img src="https://img.shields.io/badge/CloudWatch-Monitoring-lightgrey?logo=amazoncloudwatch" alt="Amazon CloudWatch">
 </p>
-
 
 ---
 
